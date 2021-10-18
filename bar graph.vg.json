@@ -1,0 +1,170 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "background": "white",
+  "padding": 5,
+  "width": 200,
+  "title": {"text": "Mean Data of Regions", "frame": "group"},
+  "style": "cell",
+  "data": [
+    {
+      "name": "source_0",
+      "url": "https://raw.githubusercontent.com/A-Mai/FIT3179/main/world-happiness-report-2021.csv",
+      "format": {"type": "csv", "delimiter": ","},
+      "transform": [
+        {
+          "type": "formula",
+          "expr": "datum[\"Region\"]===\"North America and ANZ\" ? 0 : datum[\"Region\"]===\"Latin America and Caribbean\" ? 1 : datum[\"Region\"]===\"Western Europe\" ? 2 : datum[\"Region\"]===\"Central and Eastern Europe\" ? 3 : datum[\"Region\"]===\"Commonwealth of Independent States\" ? 4 : datum[\"Region\"]===\"Middle East and North Africa\" ? 5 : datum[\"Region\"]===\"Sub-Saharan Africa\" ? 6 : datum[\"Region\"]===\"East Asia\" ? 7 : datum[\"Region\"]===\"Southeast Asia\" ? 8 : datum[\"Region\"]===\"South Asia\" ? 9 : 10",
+          "as": "y_Region_sort_index"
+        }
+      ]
+    },
+    {
+      "name": "data_0",
+      "source": "source_0",
+      "transform": [
+        {
+          "type": "aggregate",
+          "groupby": ["Region"],
+          "ops": ["mean", "mean", "mean", "mean", "mean", "mean", "mean"],
+          "fields": [
+            "Ladder score",
+            "Logged GDP per capita",
+            "SocialSupport",
+            "Healthy life expectancy",
+            "freedom",
+            "Generosity",
+            "CorruptionPerception"
+          ],
+          "as": [
+            "mean_Ladder score",
+            "mean_Logged GDP per capita",
+            "mean_SocialSupport",
+            "mean_Healthy life expectancy",
+            "mean_freedom",
+            "mean_Generosity",
+            "mean_CorruptionPerception"
+          ]
+        },
+        {
+          "type": "filter",
+          "expr": "isValid(datum[\"mean_Ladder score\"]) && isFinite(+datum[\"mean_Ladder score\"])"
+        }
+      ]
+    }
+  ],
+  "signals": [
+    {"name": "y_step", "value": 20},
+    {
+      "name": "height",
+      "update": "bandspace(domain('y').length, 0.1, 0.05) * y_step"
+    }
+  ],
+  "marks": [
+    {
+      "name": "marks",
+      "type": "rect",
+      "style": ["bar"],
+      "from": {"data": "data_0"},
+      "encode": {
+        "update": {
+          "fill": {"scale": "color", "field": "Region"},
+          "tooltip": {
+            "signal": "{\"Region\": isValid(datum[\"Region\"]) ? datum[\"Region\"] : \"\"+datum[\"Region\"], \"Mean of Ladder score\": format(datum[\"mean_Ladder score\"], \"\"), \"Mean of Logged GDP per capita\": format(datum[\"mean_Logged GDP per capita\"], \"\"), \"Mean of Social Support\": format(datum[\"mean_SocialSupport\"], \"\"), \"Mean of Healthy life expectancy\": format(datum[\"mean_Healthy life expectancy\"], \"\"), \"Mean of Freedom to Make Life Choices\": format(datum[\"mean_freedom\"], \"\"), \"Mean of Generosity\": format(datum[\"mean_Generosity\"], \"\"), \"Mean of Freedom to Make Corruption Perception\": format(datum[\"mean_CorruptionPerception\"], \"\")}"
+          },
+          "ariaRoleDescription": {"value": "bar"},
+          "description": {
+            "signal": "\"Regions: \" + (isValid(datum[\"Region\"]) ? datum[\"Region\"] : \"\"+datum[\"Region\"]) + \"; Mean happiness Index: \" + (format(datum[\"mean_Ladder score\"], \"\")) + \"; Region: \" + (isValid(datum[\"Region\"]) ? datum[\"Region\"] : \"\"+datum[\"Region\"]) + \"; Mean of Ladder score: \" + (format(datum[\"mean_Ladder score\"], \"\")) + \"; Mean of Logged GDP per capita: \" + (format(datum[\"mean_Logged GDP per capita\"], \"\")) + \"; Mean of Social Support: \" + (format(datum[\"mean_SocialSupport\"], \"\")) + \"; Mean of Healthy life expectancy: \" + (format(datum[\"mean_Healthy life expectancy\"], \"\")) + \"; Mean of Freedom to Make Life Choices: \" + (format(datum[\"mean_freedom\"], \"\")) + \"; Mean of Generosity: \" + (format(datum[\"mean_Generosity\"], \"\")) + \"; Mean of Freedom to Make Corruption Perception: \" + (format(datum[\"mean_CorruptionPerception\"], \"\"))"
+          },
+          "x": {"scale": "x", "field": "mean_Ladder score"},
+          "x2": {"scale": "x", "value": 0},
+          "y": {"scale": "y", "field": "Region"},
+          "height": {"scale": "y", "band": 1}
+        }
+      }
+    }
+  ],
+  "scales": [
+    {
+      "name": "x",
+      "type": "linear",
+      "domain": {"data": "data_0", "field": "mean_Ladder score"},
+      "range": [0, {"signal": "width"}],
+      "nice": true,
+      "zero": true
+    },
+    {
+      "name": "y",
+      "type": "band",
+      "domain": {
+        "data": "source_0",
+        "field": "Region",
+        "sort": {"op": "min", "field": "y_Region_sort_index"}
+      },
+      "range": {"step": {"signal": "y_step"}},
+      "paddingInner": 0.1,
+      "paddingOuter": 0.05
+    },
+    {
+      "name": "color",
+      "type": "ordinal",
+      "domain": [
+        "North America and ANZ",
+        "Latin America and Caribbean",
+        "Western Europe",
+        "Central and Eastern Europe",
+        "Commonwealth of Independent States",
+        "Middle East and North Africa",
+        "Sub-Saharan Africa",
+        "East Asia",
+        "Southeast Asia",
+        "South Asia"
+      ],
+      "range": [
+        "#990F02",
+        "#E3242B",
+        "#02a4d3",
+        "#1F456E",
+        "#3832C2",
+        "#FA8128",
+        "#FCAE1E",
+        "#597D35",
+        "#028A0F",
+        "#74B72F"
+      ]
+    }
+  ],
+  "axes": [
+    {
+      "scale": "x",
+      "orient": "bottom",
+      "gridScale": "y",
+      "grid": true,
+      "tickCount": {"signal": "ceil(width/40)"},
+      "domain": false,
+      "labels": false,
+      "aria": false,
+      "maxExtent": 0,
+      "minExtent": 0,
+      "ticks": false,
+      "zindex": 0
+    },
+    {
+      "scale": "x",
+      "orient": "bottom",
+      "grid": false,
+      "title": "Mean happiness Index",
+      "labelFlush": true,
+      "labelOverlap": true,
+      "tickCount": {"signal": "ceil(width/40)"},
+      "zindex": 0
+    },
+    {
+      "scale": "y",
+      "orient": "left",
+      "grid": false,
+      "title": "Regions",
+      "zindex": 0
+    }
+  ],
+  "config": {}
+}

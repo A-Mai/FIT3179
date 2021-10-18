@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title> Assignment 2 - Happiness Index - Anderson Mai </title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+    <script src="https://cdn.jsdelivr.net/npm/vega@5.20.2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.1.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.17.0"></script>
+    
+    <script src="Assignment2_javascript.js"></script>
+
+    <link rel="stylesheet" href="Assignment2_style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;700&display=swap" rel="stylesheet"> 
+</head>
+
+<body style="background-color:gray">
+    <div> <h id="title" > Happiness Around the World in 2021</h></div>
+    <div>
+        <div id="MapDiv"> 
+            <p class="heading">Happiness Index of Countries around the World</p>
+            <div id="chloropleth"></div>
+            <p class="paragraph">The World Happiness Index is a ranking of national happiness based on the
+                Cantril Ladder survey (thus the ladder score). Respondents rate their life on a 0 to 10 scale,
+                with 0 being the worst possible life and 10 being the best possible. Thus country rankings don't
+                actually go to 0 or 10 as they are averaged scores. The highest ranked country is 
+                <span class='westernEurope_text'>Finland</span> with a score
+                of 7.842 and the lowest ranked country is  <span class='southAsia_text'>Afghanistan</span> at 2.523
+            </p>
+            <p class="paragraph"> From this graph, outliers when it comes to state happiness 
+                in a region can be found. <span class='latinAmericaCarribean_text'>Venezuela</span> and 
+                <span class='latinAmericaCarribean_text'>Haiti</span> are uniquely unhappy  
+                in their geographic region while <span class='commonwealthIndependentStates_text'>Khazakstan</span>, 
+                <span class='commonwealthIndependentStates_text'>Uzbekistan</span>, 
+                <span class='middleEastNorthAfrica_text'>Saudi Arabia</span>, 
+                <span class='middleEastNorthAfrica_text'>United Arab Emirates</span>, 
+                and <span class='southeastAsia_text'>Thailand</span> are happier than their neighbours. </p>
+
+    <div id="scatterplotDiv"></div>
+        <p class="heading">Happiness Index Against GDP Per Capita (Logged)</p>
+        <div class="ChartDiv">
+            <div id="scatterplot"> </div>
+        </div>
+        <p class="paragraph">Directly from the graph, it can be seen that there is a correlation
+            between happiness and GDP per capita, as well as healthy life expectancy. When adjusting the sliders,
+            one can also see that there is some correlation with corruption perception and social support with 
+            the other factors. 
+        </p>
+        <p class="paragraph">Interesting outliers that can be seen when interacting includes 
+            <span class='subSaharanAfrica_text'>Rwanda</span>, with 
+            a low happiness index and GDP per capita, yet is extrodinarily low in corruption perception at 
+            second lowest behind <span class='southeastAsia_text'>Singapore</span>.
+        </p>
+    <div id="sectionedBar">
+        <div id="barChart">
+            <div id="bar"> </div>
+        </div>
+        <div id="barTitle">Average Data by Region</div> 
+        <div id="barParagraph">The average data presents similar findings to that of the scatterplot graph 
+            above, mainly that <span class='northAmericaANZ_text'>North America</span> and ANZ have the highest happiness on 
+            average followed by <span class='westernEurope_text'>Western Europe</span>. 
+            This is despite the <span class='westernEurope_text'>Western European</span> region having 
+            some higher happiness countries, they are more spread out.
+        </div> 
+    </div>
+    </div>
+
+
+</body>
+</html>

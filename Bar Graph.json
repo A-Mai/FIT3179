@@ -1,0 +1,87 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "data": {
+    "url": "https://raw.githubusercontent.com/A-Mai/FIT3179/main/world-happiness-report-2021.csv"
+  },
+  "mark": "bar",
+  "title": "Mean Data of Regions",
+  "encoding": {
+    "x": {
+      "field": "Region",
+      "type": "nominal",
+      "title": "Regions",
+      "sort": [
+        "North America and ANZ",
+        "Latin America and Caribbean",
+        "Western Europe",
+        "Central and Eastern Europe",
+        "Commonwealth of Independent States",
+        "Middle East and North Africa",
+        "Sub-Saharan Africa",
+        "East Asia",
+        "Southeast Asia",
+        "South Asia"
+      ]
+    },
+    "y": {
+      "field": "Ladder score",
+      "aggregate": "mean",
+      "type": "quantitative",
+      "title": "Mean happiness Index"
+    },
+    "color": {
+      "field": "Region",
+      "type": "nominal",
+      "legend": null,
+      "scale": {
+        "domain": [
+          "North America and ANZ",
+          "Latin America and Caribbean",
+          "Western Europe",
+          "Central and Eastern Europe",
+          "Commonwealth of Independent States",
+          "Middle East and North Africa",
+          "Sub-Saharan Africa",
+          "East Asia",
+          "Southeast Asia",
+          "South Asia"
+        ],
+        "range": [
+          "#1F456E",
+          "#E3242B",
+          "#02a4d3",
+          "#0BB5FF",
+          "#3832C2",
+          "#FA8128",
+          "#FCAE1E",
+          "#597D35",
+          "#028A0F",
+          "#74B72F"
+        ]
+      }
+    },
+    "tooltip": [
+      {"field": "Region", "type": "nominal"},
+      {"field": "Ladder score", "aggregate": "mean"},
+      {"field": "Logged GDP per capita", "aggregate": "mean"},
+      {
+        "field": "SocialSupport",
+        "aggregate": "mean",
+        "title": "Mean of Social Support"
+      },
+      {"field": "Healthy life expectancy", "aggregate": "mean"},
+      {
+        "field": "freedom",
+        "aggregate": "mean",
+        "title": "Mean of Freedom to Make Life Choices"
+      },
+      {"field": "Generosity", "aggregate": "mean"},
+      {
+        "field": "CorruptionPerception",
+        "aggregate": "mean",
+        "title": "Mean of Freedom to Make Corruption Perception"
+      }
+    ]
+  },
+  "config": {}
+}

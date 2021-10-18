@@ -1,0 +1,401 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "background": "white",
+  "padding": 5,
+  "width": 800,
+  "height": 600,
+
+  "style": "cell",
+  "data": [
+    {"name": "Regional_indicator_highlight_store"},
+    {
+      "name": "source_0",
+      "url": "https://raw.githubusercontent.com/A-Mai/FIT3179/main/world-happiness-report-2021.csv",
+      "format": {"type": "csv", "delimiter": ","},
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "Regional_indicator_selection == null || datum.Region == Regional_indicator_selection"
+        },
+        {
+          "type": "filter",
+          "expr": "datum.CorruptionPerception < Max_Corruption"
+        },
+        {"type": "filter", "expr": "datum.SocialSupport < Max_Social_Support"}
+      ]
+    },
+    {
+      "name": "data_0",
+      "source": "source_0",
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "isValid(datum[\"Logged GDP per capita\"]) && isFinite(+datum[\"Logged GDP per capita\"]) && isValid(datum[\"Ladder score\"]) && isFinite(+datum[\"Ladder score\"]) && isValid(datum[\"Healthy life expectancy\"]) && isFinite(+datum[\"Healthy life expectancy\"])"
+        }
+      ]
+    },
+    {
+      "name": "data_1",
+      "source": "source_0",
+      "transform": [
+        {
+          "type": "filter",
+          "expr": "isValid(datum[\"Logged GDP per capita\"]) && isFinite(+datum[\"Logged GDP per capita\"]) && isValid(datum[\"Ladder score\"]) && isFinite(+datum[\"Ladder score\"])"
+        }
+      ]
+    }
+  ],
+  "signals": [
+    {
+      "name": "unit",
+      "value": {},
+      "on": [
+        {"events": "mousemove", "update": "isTuple(group()) ? group() : unit"}
+      ]
+    },
+    {
+      "name": "Regional_indicator_highlight_Region_legend",
+      "value": null,
+      "on": [
+        {
+          "events": [
+            {
+              "source": "view",
+              "type": "click",
+              "markname": "Region_legend_symbols"
+            },
+            {
+              "source": "view",
+              "type": "click",
+              "markname": "Region_legend_labels"
+            },
+            {
+              "source": "view",
+              "type": "click",
+              "markname": "Region_legend_entries"
+            }
+          ],
+          "update": "datum.value || item().items[0].items[0].datum.value",
+          "force": true
+        },
+        {
+          "events": [{"source": "view", "type": "click"}],
+          "update": "!event.item || !datum ? null : Regional_indicator_highlight_Region_legend",
+          "force": true
+        }
+      ]
+    },
+    {
+      "name": "Regional_indicator_highlight",
+      "update": "vlSelectionResolve(\"Regional_indicator_highlight_store\", \"union\", true, true)"
+    },
+    {
+      "name": "Max_Corruption",
+      "value": 1,
+      "bind": {
+        "input": "range",
+        "min": 0,
+        "max": 1,
+        "step": 0.0001,
+        "name": "Maximum Perception of Corruption: "
+      }
+    },
+    {
+      "name": "Max_Social_Support",
+      "value": 1,
+      "bind": {
+        "input": "range",
+        "min": 0,
+        "max": 1,
+        "step": 0.0001,
+        "name": "Maximum Social Support: "
+      }
+    },
+    {
+      "name": "Regional_indicator_selection",
+      "bind": {
+        "input": "select",
+        "options": [
+          null,
+          "North America and ANZ",
+          "Latin America and Caribbean",
+          "Western Europe",
+          "Central and Eastern Europe",
+          "Commonwealth of Independent States",
+          "Middle East and North Africa",
+          "Sub-Saharan Africa",
+          "East Asia",
+          "Southeast Asia",
+          "South Asia"
+        ],
+        "labels": [
+          "Show All",
+          "North America and ANZ",
+          "Latin America and Caribbean",
+          "Western Europe",
+          "Central and Eastern Europe",
+          "Commonwealth of Independent States",
+          "Middle East and North Africa",
+          "Sub-Saharan Africa",
+          "East Asia",
+          "Southeast Asia",
+          "South Asia"
+        ],
+        "name": "Region Selection: "
+      }
+    },
+    {
+      "name": "Regional_indicator_highlight_tuple",
+      "update": "Regional_indicator_highlight_Region_legend !== null ? {fields: Regional_indicator_highlight_tuple_fields, values: [Regional_indicator_highlight_Region_legend]} : null"
+    },
+    {
+      "name": "Regional_indicator_highlight_tuple_fields",
+      "value": [{"type": "E", "field": "Region"}]
+    },
+    {
+      "name": "Regional_indicator_highlight_toggle",
+      "value": false,
+      "on": [
+        {
+          "events": {"merge": [{"source": "view", "type": "click"}]},
+          "update": "event.shiftKey"
+        }
+      ]
+    },
+    {
+      "name": "Regional_indicator_highlight_modify",
+      "on": [
+        {
+          "events": {"signal": "Regional_indicator_highlight_tuple"},
+          "update": "modify(\"Regional_indicator_highlight_store\", Regional_indicator_highlight_toggle ? null : Regional_indicator_highlight_tuple, Regional_indicator_highlight_toggle ? null : true, Regional_indicator_highlight_toggle ? Regional_indicator_highlight_tuple : null)"
+        }
+      ]
+    }
+  ],
+  "marks": [
+    {
+      "name": "layer_0_marks",
+      "type": "symbol",
+      "style": ["circle"],
+      "interactive": true,
+      "from": {"data": "data_0"},
+      "encode": {
+        "update": {
+          "opacity": [
+            {
+              "test": "!length(data(\"Regional_indicator_highlight_store\")) || vlSelectionTest(\"Regional_indicator_highlight_store\", datum)",
+              "value": 0.6
+            },
+            {"value": 0.2}
+          ],
+          "fill": {"scale": "color", "field": "Region"},
+          "tooltip": {
+            "signal": "{\"Country name\": isValid(datum[\"Country name\"]) ? datum[\"Country name\"] : \"\"+datum[\"Country name\"], \"Region\": isValid(datum[\"Region\"]) ? datum[\"Region\"] : \"\"+datum[\"Region\"], \"Logged GDP per capita\": format(datum[\"Logged GDP per capita\"], \",\"), \"Ladder score\": format(datum[\"Ladder score\"], \",\"), \"Healthy life expectancy\": format(datum[\"Healthy life expectancy\"], \",\"), \"Freedom To Make Life Choices\": format(datum[\"freedom\"], \",\"), \"SocialSupport\": format(datum[\"SocialSupport\"], \",\"), \"CorruptionPerception\": format(datum[\"CorruptionPerception\"], \",\")}"
+          },
+          "ariaRoleDescription": {"value": "circle"},
+          "description": {
+            "signal": "\"Logged GDP per capita: \" + (format(datum[\"Logged GDP per capita\"], \"\")) + \"; Happiness Index: \" + (format(datum[\"Ladder score\"], \"\")) + \"; Healthy life expectancy: \" + (format(datum[\"Healthy life expectancy\"], \".1s\")) + \"; Region: \" + (isValid(datum[\"Region\"]) ? datum[\"Region\"] : \"\"+datum[\"Region\"]) + \"; Country name: \" + (isValid(datum[\"Country name\"]) ? datum[\"Country name\"] : \"\"+datum[\"Country name\"]) + \"; Ladder score: \" + (format(datum[\"Ladder score\"], \",\")) + \"; Freedom To Make Life Choices: \" + (format(datum[\"freedom\"], \",\")) + \"; SocialSupport: \" + (format(datum[\"SocialSupport\"], \",\")) + \"; CorruptionPerception: \" + (format(datum[\"CorruptionPerception\"], \",\"))"
+          },
+          "x": [
+            {
+              "test": "!isValid(datum[\"Logged GDP per capita\"]) || !isFinite(+datum[\"Logged GDP per capita\"])",
+              "value": 0
+            },
+            {"scale": "x", "field": "Logged GDP per capita"}
+          ],
+          "y": {"scale": "y", "field": "Ladder score"},
+          "size": {"scale": "size", "field": "Healthy life expectancy"},
+          "shape": {"value": "circle"}
+        }
+      }
+    },
+    {
+      "name": "layer_1_marks",
+      "type": "text",
+      "style": ["text"],
+      "interactive": true,
+      "from": {"data": "data_1"},
+      "encode": {
+        "update": {
+          "align": {"value": "right"},
+          "baseline": {"value": "middle"},
+          "dx": {"value": -12},
+          "fontSize": {"value": 11.5},
+          "fontStyle": {"value": "italic"},
+          "fill": {"value": "black"},
+          "tooltip": {
+            "signal": "{\"Country name\": isValid(datum[\"Country name\"]) ? datum[\"Country name\"] : \"\"+datum[\"Country name\"], \"Region\": isValid(datum[\"Region\"]) ? datum[\"Region\"] : \"\"+datum[\"Region\"], \"Ladder score\": format(datum[\"Ladder score\"], \"\"), \"Logged GDP per capita\": format(datum[\"Logged GDP per capita\"], \"\"), \"Healthy life expectancy\": format(datum[\"Healthy life expectancy\"], \"\"), \"Freedom To Make Life Choices\": format(datum[\"freedom\"], \"\"), \"SocialSupport\": format(datum[\"SocialSupport\"], \"\"), \"Perception of Corruption\": format(datum[\"CorruptionPerception\"], \"\"), \"Generosity\": format(datum[\"Generosity\"], \"\")}"
+          },
+          "description": {
+            "signal": "\"Logged GDP per capita: \" + (format(datum[\"Logged GDP per capita\"], \"\")) + \"; Happiness Index: \" + (format(datum[\"Ladder score\"], \"\")) + \"; Country name: \" + (isValid(datum[\"Country name\"]) ? datum[\"Country name\"] : \"\"+datum[\"Country name\"]) + \"; Region: \" + (isValid(datum[\"Region\"]) ? datum[\"Region\"] : \"\"+datum[\"Region\"]) + \"; Ladder score: \" + (format(datum[\"Ladder score\"], \"\")) + \"; Healthy life expectancy: \" + (format(datum[\"Healthy life expectancy\"], \"\")) + \"; Freedom To Make Life Choices: \" + (format(datum[\"freedom\"], \"\")) + \"; SocialSupport: \" + (format(datum[\"SocialSupport\"], \"\")) + \"; Perception of Corruption: \" + (format(datum[\"CorruptionPerception\"], \"\")) + \"; Generosity: \" + (format(datum[\"Generosity\"], \"\"))"
+          },
+          "x": [
+            {
+              "test": "!isValid(datum[\"Logged GDP per capita\"]) || !isFinite(+datum[\"Logged GDP per capita\"])",
+              "value": 0
+            },
+            {"scale": "x", "field": "Logged GDP per capita"}
+          ],
+          "y": {"scale": "y", "field": "Ladder score"}
+        }
+      }
+    }
+  ],
+  "scales": [
+    {
+      "name": "x",
+      "type": "linear",
+      "domain": [5, 12],
+      "range": [0, {"signal": "width"}],
+      "zero": false
+    },
+    {
+      "name": "y",
+      "type": "linear",
+      "domain": [0, 10],
+      "range": [{"signal": "height"}, 0],
+      "zero": true
+    },
+    {
+      "name": "color",
+      "type": "ordinal",
+      "domain": [
+        "North America and ANZ",
+        "Latin America and Caribbean",
+        "Western Europe",
+        "Central and Eastern Europe",
+        "Commonwealth of Independent States",
+        "Middle East and North Africa",
+        "Sub-Saharan Africa",
+        "East Asia",
+        "Southeast Asia",
+        "South Asia"
+      ],
+      "range": [
+        "#420C09",
+        "#E3242B",
+        "#02a4d3",
+        "#1F456E",
+        "#3832C2",
+        "#FA8128",
+        "#FCAE1E",
+        "#597D35",
+        "#028A0F",
+        "#74B72F"
+      ]
+    },
+    {
+      "name": "size",
+      "type": "threshold",
+      "domain": [50, 60, 70],
+      "range": [10, 100, 200, 400]
+    }
+  ],
+  "axes": [
+    {
+      "scale": "x",
+      "orient": "bottom",
+      "tickCount": 8,
+      "gridScale": "y",
+      "grid": true,
+      "domain": false,
+      "labels": false,
+      "aria": false,
+      "maxExtent": 0,
+      "minExtent": 0,
+      "ticks": false,
+      "zindex": 0
+    },
+    {
+      "scale": "y",
+      "orient": "left",
+      "tickCount": 6,
+      "gridScale": "x",
+      "grid": true,
+      "domain": false,
+      "labels": false,
+      "aria": false,
+      "maxExtent": 0,
+      "minExtent": 0,
+      "ticks": false,
+      "zindex": 0
+    },
+    {
+      "scale": "x",
+      "orient": "bottom",
+      "grid": false,
+      "title": "Logged GDP per capita",
+      "tickCount": 8,
+      "labelFlush": true,
+      "labelOverlap": true,
+      "zindex": 0
+    },
+    {
+      "scale": "y",
+      "orient": "left",
+      "grid": false,
+      "title": "Happiness Index",
+      "tickCount": 6,
+      "labelOverlap": true,
+      "zindex": 0
+    }
+  ],
+  "legends": [
+    {
+      "fill": "color",
+      "symbolType": "circle",
+      "title": "Region",
+      "encode": {
+        "labels": {
+          "name": "Region_legend_labels",
+          "interactive": true,
+          "update": {
+            "opacity": [
+              {
+                "test": "(!length(data(\"Regional_indicator_highlight_store\")) || (Regional_indicator_highlight[\"Region\"] && indexof(Regional_indicator_highlight[\"Region\"], datum.value) >= 0))",
+                "value": 1
+              },
+              {"value": 0.35}
+            ]
+          }
+        },
+        "symbols": {
+          "name": "Region_legend_symbols",
+          "interactive": true,
+          "update": {
+            "opacity": [
+              {
+                "test": "(!length(data(\"Regional_indicator_highlight_store\")) || (Regional_indicator_highlight[\"Region\"] && indexof(Regional_indicator_highlight[\"Region\"], datum.value) >= 0))",
+                "value": 0.6
+              },
+              {"value": 0.35}
+            ]
+          }
+        },
+        "entries": {
+          "name": "Region_legend_entries",
+          "interactive": true,
+          "update": {"fill": {"value": "transparent"}}
+        }
+      }
+    },
+    {
+      "format": ".1s",
+      "size": "size",
+      "labelOverlap": "greedy",
+      "symbolType": "circle",
+      "title": "Healthy life expectancy",
+      "encode": {
+        "symbols": {
+          "update": {
+            "fill": {"value": "black"},
+            "fillOpacity": {"value": 0.6},
+            "opacity": {"value": 0.6},
+            "stroke": {"value": "transparent"}
+          }
+        }
+      }
+    }
+  ],
+  "config": {}
+}
