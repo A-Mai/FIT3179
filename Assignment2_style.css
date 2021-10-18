@@ -1,22 +1,21 @@
 #title{ margin-left: auto;
     margin-right: auto;
-    width: 19em;
+    width: 11em;
     display: block;
-    margin-left: auto;
-    margin-right: auto;
+    margin-bottom: -3%;
     text-align: "centre";
-    font-family:'Open Sans', sans-serif;
-    font-size: 40px;
+    font-family: 'Teko', sans-serif;
+    font-size: 80px;
     font-weight:bold;
     top:10%;
     background-color:white}
 
-.heading {font-family: 'Open Sans', sans-serif;
-    font-size: 25px;
+.heading {  font-family: 'Teko', sans-serif;
+    font-size: 40px;
     text-align: "centre";
     margin-right: auto;
     margin-left: auto;
-    width: 25em}
+    width: 15em}
 .paragraph{font-family: 'Open Sans', sans-serif;
     font-size: 16px;
     text-align: "centre";
@@ -34,16 +33,17 @@ font-size: 12px;
 font-weight:normal}
 #barChart{width: 28em;
     margin-right: auto;}
-#barTitle{width: 28em;
+#barTitle{font-family: 'Teko', sans-serif;
+    width: 28em;
     margin-left: 50%;
     margin-top: -27%;
-    font-family: 'Open Sans', sans-serif;
-    font-size: 25px;}
+    font-size: 40px;}
 #barParagraph{font-family: 'Open Sans', sans-serif;
     font-size: 12px;
     width: 38em;
     margin-left: 50%;
-    margin-top: 1%;
+    margin-top: 3%;
+    margin-bottom: 50%;
 }
 #sectionedBar{width: 60em;
 height:17em;
